@@ -1,0 +1,24 @@
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anket Oluşturucu</title>
+    <link rel="stylesheet" href="/survey.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Anket Oluştur</h1>
+        <form id="survey-form">
+            <input type="text" id="question" placeholder="Anket sorusu" required>
+            <div id="options">
+                <input type="text" placeholder="Seçenek 1" required>
+                <input type="text" placeholder="Seçenek 2" required>
+            </div>
+            <button type="button" id="add-option">+ Seçenek Ekle</button>
+            <button type="submit">Anketi Oluştur</button>
+        </form>
+        <div id="surveys"></div>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
