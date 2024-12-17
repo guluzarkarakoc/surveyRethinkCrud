@@ -45,29 +45,32 @@ app.get('/surveys', (req, res) => {
 });
 app.post('/surveys/:id/vote/:index', (req, res) => {
     const { id, index } = req.params;
-    console.log(`Survey ID: ${id}, Option Index: ${index}`);
+    const optionIndex = parseInt(index, 10);
+    if (isNaN(optionIndex)) {
+        return res.status(400).json({ error: "Invalid option index" });
+    }
     r.db('surveys')
         .table('surveys')
         .get(id)
-        .update({
-            options: r.row('options').changeAt(
-                parseInt(index), 
-                r.row('options')(parseInt(index))
-                .merge({
-                    votes: r.row('options')(parseInt(index))('votes').add(1)
+        .update((survey) => ({
+            options: survey("options").changeAt(
+                optionIndex,
+                survey("options")(optionIndex).merge({
+                    votes: survey("options")(optionIndex)("votes").add(1)
                 })
             )
-        })
+        }))
         .run(connection, (err, result) => {
             if (err) {
-                res.status(500).send(err);
+                console.error("Error updating survey:", err);
+                res.status(500).json({ error: err.message });
             } else {
                 r.db('surveys')
                     .table('surveys')
                     .get(id)
                     .run(connection, (err, updatedSurvey) => {
-                        if (err) res.status(500).send(err);
-                        else res.status(200).send(updatedSurvey);
+                        if (err) res.status(500).json({ error: err.message });
+                        else res.status(200).json(updatedSurvey);
                     });
             }
         });
